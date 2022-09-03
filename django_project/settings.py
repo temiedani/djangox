@@ -27,6 +27,11 @@ INSTALLED_APPS = [
     "allauth.account",
     "crispy_forms",
     "debug_toolbar",
+    # additions
+    'rest_framework',
+    'corsheaders',
+    'knox',
+
     # Local
     "accounts",
     "pages",
@@ -36,6 +41,10 @@ INSTALLED_APPS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
+    # middleware classes to listen in on server responses for api
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -45,6 +54,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
 ]
 
 # URLS
@@ -180,3 +190,26 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
+
+
+# CORS_ALLOWED_ORIGINS: list of origins authorized origins to make requests
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "https://company.com",
+    "https://api.company.com",
+    "http://localhost:8080",
+    "http://127.0.0.1:8000"
+]
+# regex pattern to match company.com: allows api use for that domain
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://\w+\.company\.com$",
+]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        'knox.auth.TokenAuthentication',
+    ]
+}
